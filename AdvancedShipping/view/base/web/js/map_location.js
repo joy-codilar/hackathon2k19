@@ -23,10 +23,10 @@ define([
     };
     var Map = function (element, onChange, defaultMarker) {
         //window.advancedShipping.apiKey
-        isScriptTagCreate.create("AIzaSyASDIwO9tXIxSV0bu-4Ficr6mgz9EHptpg", this.render.bind(this));
         this.element = element;
         this.onchange = onChange;
         this.defaultMarker = defaultMarker ? defaultMarker : {lat: 12.9716, lng: 77.5946};
+        isScriptTagCreate.create("AIzaSyASDIwO9tXIxSV0bu-4Ficr6mgz9EHptpg", this.render.bind(this));
     };
 
     Map.prototype = {
