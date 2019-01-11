@@ -97,6 +97,8 @@ define([
                         result.address_components.forEach(function (component) {
                             Object.assign(address, _self.manageAddressComponent(component, address));
                         });
+                        var breakPoint = Math.floor(address.street.length / 2);
+                        address.street = [address.street.slice(0, breakPoint).join(", "), address.street.slice(breakPoint + 1).join(", ")];
                     });
                 }
                 if (typeof _self.onchange === "function") {
@@ -111,17 +113,21 @@ define([
                 "administrative_area_level_1": "state",
                 "locality": "city"
             };
+
             for (var item in componentMap) {
                 if (component.types.indexOf(item) >= 0) {
                     var result = {};
-                    result[componentMap[item]] = component.long_name;
+                    result[componentMap[item]] = (componentMap[item] === 'country') ? component.short_name : component.long_name;
                     return result;
                 }
             }
+
+
             if (!address.street) address.street = [];
             if (address.street.indexOf(component.long_name) < 0) {
                 address.street.push(component.long_name);
             }
+
             return {};
         }
     }
