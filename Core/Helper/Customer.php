@@ -20,9 +20,6 @@ use \Magento\Eav\Model\ResourceModel\Entity\Attribute\SetFactory as AttributeSet
 use Magento\Eav\Model\ResourceModel\Entity\Attribute\Set;
 use \Magento\Customer\Setup\CustomerSetupFactory;
 
-
-
-
 class Customer extends AbstractHelper
 {
     /**

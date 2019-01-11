@@ -10,7 +10,7 @@ namespace Codilar\Core\Controller\Adminhtml\Index;
 
 class Index extends \Magento\Backend\App\Action
 {
-    const ADMIN_RESOURCE = 'Index';       
+    const ADMIN_RESOURCE = 'Codilar_Core::index';
         
     protected $resultPageFactory;
     public function __construct(

@@ -4,7 +4,7 @@
         <tab id="codilar" translate="label" sortOrder="100" class="codilar-tab">
             <label>Codilar Settings</label>
         </tab>
-        <section id="core_module" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+        <section id="codilar_core_module" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
             <resource>Codilar_Core::codilar</resource>
             <class>separator-top</class>
             <label>Core</label>
