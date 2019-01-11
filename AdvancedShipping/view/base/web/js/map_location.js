@@ -93,6 +93,7 @@ define([
                         "lat": results[0].geometry.location.lat(),
                         "lng": results[0].geometry.location.lng()
                     }
+                    address.street = [];
                     results.forEach(function (result) {
                         result.address_components.forEach(function (component) {
                             Object.assign(address, _self.manageAddressComponent(component, address));
