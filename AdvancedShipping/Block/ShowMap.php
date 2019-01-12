@@ -12,6 +12,7 @@ namespace Codilar\AdvancedShipping\Block;
 
 use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\View\Element\Template;
 use Magento\Sales\Model\Order\Address;
 
@@ -24,6 +25,12 @@ class ShowMap extends Template
      * @var Address|null
      */
     protected $address = null;
+
+    /**
+     * @var string
+     */
+    protected $type;
+
     /**
      * @var EncryptorInterface
      */
@@ -85,9 +92,30 @@ class ShowMap extends Template
 
     /**
      * @return string
+     * @throws LocalizedException
      */
     public function getMapUrl() {
-        return $this->url->getUrl('advanced_shipping/address/map', ['aid' => urlencode($this->encryptor->encrypt($this->getAddress()->getId()))]);
+        return $this->url->getUrl('advanced_shipping/address/map', ['aid' => urlencode($this->encryptor->encrypt($this->getAddress()->getId())), 'type' => $this->getType()]);
+    }
+
+    /**
+     * @return string
+     * @throws LocalizedException
+     */
+    public function getType()
+    {
+        if (!$this->type) {
+            throw new LocalizedException(__("Address type not set"));
+        }
+        return $this->type;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
     }
 
 }

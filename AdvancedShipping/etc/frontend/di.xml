@@ -10,4 +10,5 @@
     <type name="Magento\Customer\Block\Address\Book">
         <plugin name="add.show_map.button" type="Codilar\AdvancedShipping\Plugin\Customer\Address\Book" />
     </type>
+    <preference for="Magento\Customer\Controller\Address\FormPost" type="Codilar\AdvancedShipping\Controller\Address\FormPost" />
 </config>

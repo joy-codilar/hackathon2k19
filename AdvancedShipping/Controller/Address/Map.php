@@ -11,7 +11,6 @@ namespace Codilar\AdvancedShipping\Controller\Address;
 
 
 use Codilar\AdvancedShipping\Model\Config;
-use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
@@ -21,7 +20,13 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\View\Result\Page;
-use Magento\Sales\Api\OrderAddressRepositoryInterface;
+use Magento\Customer\Model\AddressFactory as CustomerAddressFactory;
+use Magento\Customer\Model\Address as CustomerAddress;
+use Magento\Customer\Model\ResourceModel\Address as CustomerAddressResource;
+use Magento\Sales\Model\Order\AddressFactory as OrderAddressFactory;
+use Magento\Sales\Model\Order\Address as OrderAddress;
+use Magento\Sales\Model\ResourceModel\Order\Address as OrderAddressResource;
+
 
 class Map extends Action
 {
@@ -34,35 +39,49 @@ class Map extends Action
      */
     private $encryptor;
     /**
-     * @var OrderAddressRepositoryInterface
+     * @var CustomerAddressFactory
      */
-    private $orderAddressRepository;
+    private $customerAddressFactory;
     /**
-     * @var AddressRepositoryInterface
+     * @var OrderAddressFactory
      */
-    private $customerAddressRepository;
+    private $orderAddressFactory;
+    /**
+     * @var CustomerAddressResource
+     */
+    private $customerAddressResource;
+    /**
+     * @var OrderAddressResource
+     */
+    private $orderAddressResource;
 
     /**
      * Map constructor.
      * @param Context $context
      * @param Config $config
      * @param EncryptorInterface $encryptor
-     * @param OrderAddressRepositoryInterface $orderAddressRepository
-     * @param AddressRepositoryInterface $customerAddressRepository
+     * @param CustomerAddressFactory $customerAddressFactory
+     * @param OrderAddressFactory $orderAddressFactory
+     * @param CustomerAddressResource $customerAddressResource
+     * @param OrderAddressResource $orderAddressResource
      */
     public function __construct(
         Context $context,
         Config $config,
         EncryptorInterface $encryptor,
-        OrderAddressRepositoryInterface $orderAddressRepository,
-        AddressRepositoryInterface $customerAddressRepository
+        CustomerAddressFactory $customerAddressFactory,
+        OrderAddressFactory $orderAddressFactory,
+        CustomerAddressResource $customerAddressResource,
+        OrderAddressResource $orderAddressResource
     )
     {
         parent::__construct($context);
         $this->config = $config;
         $this->encryptor = $encryptor;
-        $this->orderAddressRepository = $orderAddressRepository;
-        $this->customerAddressRepository = $customerAddressRepository;
+        $this->customerAddressFactory = $customerAddressFactory;
+        $this->orderAddressFactory = $orderAddressFactory;
+        $this->customerAddressResource = $customerAddressResource;
+        $this->orderAddressResource = $orderAddressResource;
     }
 
     /**
@@ -79,9 +98,11 @@ class Map extends Action
             try {
                 $addressId = $this->encryptor->decrypt(urldecode($this->getRequest()->getParam('aid')));
                 if ($this->getRequest()->getParam('type', 'order') === "customer") {
-                    $address = $this->customerAddressRepository->getById($addressId);
+                    $address = $this->customerAddressFactory->create();
+                    $this->customerAddressResource->load($address, $addressId);
                 } else {
-                    $address = $this->orderAddressRepository->get($addressId);
+                    $address = $this->orderAddressFactory->create();
+                    $this->orderAddressResource->load($address, $addressId);
                 }
                 if (!$address->getEntityId()) {
                     throw new LocalizedException(__("Address doesn't exist"));

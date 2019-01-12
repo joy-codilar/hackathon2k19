@@ -53,7 +53,7 @@ class Renderer
         if ($this->config->getShowMap()) {
             /** @var ShowMap $showMapBlock */
             $showMapBlock = $this->layout->createBlock(ShowMap::class);
-            $showMapBlock->setAddress($address);
+            $showMapBlock->setAddress($address)->setType('order');
             $addressString = $showMapBlock->toHtml() . $addressString;
         }
         return $addressString;

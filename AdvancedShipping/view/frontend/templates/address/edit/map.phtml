@@ -6,14 +6,24 @@
     <script type="text/javascript">
         require(['jquery', 'mapLocation', 'Codilar_AdvancedShipping/js/renderer/form'], function ($, Map, formRenderer) {
             var addressEditForm = $('.form-address-edit');
-            var latLng = $('<input type="hidden" name="lat_lng" value="" />');
-            addressEditForm.append(latLng);
+            var latLng = "<?php echo $block->getAddress()->getData('lat_lng') ?>";
+            var latLngField = $('<input type="hidden" name="lat_lng" value="' + latLng + '" />');
+            latLng = latLng.split(",");
+            if (latLng.length === 2) {
+                latLng = {
+                    lat: Number.parseFloat(latLng[0]),
+                    lng: Number.parseFloat(latLng[1])
+                }
+            } else {
+                latLng = null;
+            }
+            addressEditForm.append(latLngField);
             var m = new Map(document.getElementById('address-edit-map'), function (address) {
                 for(var item in address) {
-                    latLng.val(Object.values(address.latlng).join(","));
+                    latLngField.val(Object.values(address.latlng).join(","));
                     formRenderer.populateField(addressEditForm, item, address[item]);
                 }
-            });
+            }, latLng);
         });
     </script>
 <?php endif; ?>
