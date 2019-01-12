@@ -14,7 +14,7 @@ $address = $block->getAddress();
             $('#<?php echo $block->getMapId() ?>').on('click', function (event) {
                 event.preventDefault();
                 var options = {
-                    title: $.mage.__('Map for Address #<?php echo $address->getEntityId() ?>'),
+                    title: $.mage.__('Map for Address #<?php echo $address->getId() ?>'),
                     autoOpen: true,
                     modalClass: 'map-frame',
                     buttons: []

@@ -10,6 +10,7 @@
 namespace Codilar\AdvancedShipping\Block;
 
 
+use Magento\Customer\Api\Data\AddressInterface;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Sales\Model\Order\Address;
@@ -61,22 +62,22 @@ class ShowMap extends Template
      */
     public function getMapId() {
         if (!$this->mapId) {
-            $this->mapId = "advanced-shipping-show-map-" . $this->getAddress()->getEntityId() . uniqid();
+            $this->mapId = "advanced-shipping-show-map-" . $this->getAddress()->getId() . uniqid();
         }
         return $this->mapId;
     }
 
     /**
-     * @param Address $address
+     * @param Address|AddressInterface $address
      * @return $this
      */
-    public function setAddress(Address $address) {
+    public function setAddress($address) {
         $this->address = $address;
         return $this;
     }
 
     /**
-     * @return Address|null
+     * @return Address|AddressInterface|null
      */
     public function getAddress() {
         return $this->address;
