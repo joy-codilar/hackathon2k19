@@ -1,8 +1,8 @@
 /*jshint browser:true jquery:true*/
 define([
     "jquery",
-    "jquery/ui"
-], function ($) {
+    "Codilar_AdvancedShipping/js/config"
+], function ($, Config) {
     "use strict";
     window.AdvancedShipping = {};
     var isScriptTagCreate = {
@@ -25,8 +25,8 @@ define([
         //window.advancedShipping.apiKey
         this.element = element;
         this.onchange = onChange;
-        this.defaultMarker = defaultMarker ? defaultMarker : {lat: 12.9716, lng: 77.5946};
-        isScriptTagCreate.create("AIzaSyASDIwO9tXIxSV0bu-4Ficr6mgz9EHptpg", this.render.bind(this));
+        this.defaultMarker = defaultMarker ? defaultMarker : Config.get('default_marker');
+        isScriptTagCreate.create(Config.get('api_key'), this.render.bind(this));
     };
 
     Map.prototype = {
@@ -40,7 +40,7 @@ define([
 
             this.map = new window.google.maps.Map(this.element, {
                 center: {lat: this.defaultMarker.lat, lng: this.defaultMarker.lng},
-                zoom: 8
+                zoom: Config.get('zoom')
             });
             this.initMarker(this.defaultMarker);
             if (typeof this.onchange === 'function') {
@@ -65,16 +65,19 @@ define([
             });
         },
         initMarker: function (latlng) {
+            var _self = this;
             //Create the marker.
-            this.marker = new google.maps.Marker({
+            _self.marker = new google.maps.Marker({
                 position: latlng,
-                map: this.map,
-                draggable: true //make it draggable
+                map: _self.map,
+                draggable: typeof _self.onchange === "function" //make it draggable
             });
-            //Listen for drag events!
-            window.google.maps.event.addListener(this.marker, 'dragend', function (event) {
-                this.markerLocation();
-            });
+            if (typeof _self.onchange === "function") {
+                //Listen for drag events!
+                window.google.maps.event.addListener(_self.marker, 'dragend', function (event) {
+                    _self.markerLocation();
+                });
+            }
         },
         markerLocation: function () {
             var _self = this;
@@ -86,7 +89,12 @@ define([
             }
             //Add lat and lng values to a field that we can save.
             geocoder.geocode({'location': latLng}, function (results, status) {
-                var address = {};
+                var address = {
+                    zipcode: "",
+                    country: "",
+                    state: "",
+                    city: ""
+                };
                 if (status === google.maps.GeocoderStatus.OK) {
                     results = [results[0]];
                     address.latlng = {

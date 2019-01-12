@@ -4,7 +4,12 @@
         <advanced_shipping>
             <general>
                 <enable>0</enable>
+                <zoom>12</zoom>
+                <default_marker><![CDATA[12.9716,77.5946]]></default_marker>
             </general>
+            <display>
+                <show_map>0</show_map>
+            </display>
         </advanced_shipping>
     </default>
 </config>

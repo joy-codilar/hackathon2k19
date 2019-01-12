@@ -46,13 +46,12 @@ class LayoutProcessor implements LayoutProcessorInterface
             $shippingAddressField = $this->getFieldData($attributeCode, "shippingAddress");
             $jsLayout['components']['checkout']['children']['steps']['children']['shipping-step']['children']['shippingAddress']['children']['shipping-address-fieldset']['children'][$attributeCode] = $shippingAddressField;
 
-            $billingAddressField = $this->getFieldData($attributeCode, "billingAddress");
-
             $paymentForms = $jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']['payment']['children']['payments-list']['children'];
             foreach ($paymentForms as $paymentGroup => $groupConfig) {
                 if (isset($groupConfig['component']) && $groupConfig['component'] === 'Magento_Checkout/js/view/billing-address') {
+                    $billingAddressField = $this->getFieldData($attributeCode, $groupConfig["dataScopePrefix"]);
                     $jsLayout['components']['checkout']['children']['steps']['children']['billing-step']['children']
-                    ['payment']['children']['payments-list']['children'][$paymentGroup]['children']['form-fields']['children'][] = $billingAddressField;
+                    ['payment']['children']['payments-list']['children'][$paymentGroup]['children']['form-fields']['children'][$attributeCode] = $billingAddressField;
                 }
             }
         }
@@ -71,16 +70,13 @@ class LayoutProcessor implements LayoutProcessorInterface
                     'description' => '',
                 ],
             ],
-            'dataScope' => $formName . '.custom_attributes' . '.' . $attributeCode,
+            'dataScope' => $formName . '.custom_attributes.' . $attributeCode,
             'label' => '',
             'provider' => 'checkoutProvider',
             'sortOrder' => 0,
             'validation' => [
                 'required-entry' => true
             ],
-            'options' => [],
-            'filterBy' => null,
-            'customEntry' => null,
             'visible' => true,
         ];
     }

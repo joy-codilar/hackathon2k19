@@ -1,0 +1,12 @@
+<?php
+/** @var \Codilar\AdvancedShipping\Block\Config $block */
+?>
+<?php if ($block->getConfigModel()->getIsEnabled()): ?>
+    <script type="text/javascript">
+        require(['Codilar_AdvancedShipping/js/config'], function (Config) {
+            Config.set('api_key', "<?php echo $block->getConfigModel()->getApiKey() ?>");
+            Config.set('zoom', <?php echo $block->getConfigModel()->getZoom() ?>);
+            Config.set('default_marker', <?php echo \json_encode($block->getConfigModel()->getDefaultMarker()) ?>);
+        });
+    </script>
+<?php endif; ?>

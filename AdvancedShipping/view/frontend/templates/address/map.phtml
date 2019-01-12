@@ -1,0 +1,10 @@
+<?php
+/** @var \Codilar\AdvancedShipping\Block\Address\Map $block */
+?>
+<script type="text/javascript">
+    require([
+        'Codilar_AdvancedShipping/js/map_location'
+    ], function (Map) {
+        var map = new Map(document.body, null, <?php echo \json_encode($block->getLatLng()) ?>);
+    })
+</script>

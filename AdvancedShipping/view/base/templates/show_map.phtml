@@ -1,0 +1,26 @@
+<?php
+/** @var \Codilar\AdvancedShipping\Block\ShowMap $block */
+$address = $block->getAddress();
+?>
+<?php if ($address): ?>
+    <div>
+        <a id="<?php echo $block->getMapId() ?>" href="<?php echo $block->getMapUrl() ?>" target="_blank"><?php echo __("Show on map") ?></a>
+    </div>
+    <script type="text/javascript">
+        require([
+            'jquery',
+            'Magento_Ui/js/modal/modal'
+        ], function ($, modal) {
+            $('#<?php echo $block->getMapId() ?>').on('click', function (event) {
+                event.preventDefault();
+                var options = {
+                    title: $.mage.__('Map for Address #<?php echo $address->getEntityId() ?>'),
+                    autoOpen: true,
+                    modalClass: 'map-frame',
+                    buttons: []
+                };
+                modal(options, $('<iframe style="width: 100%; height: ' + ((window.screen.height * 2 / 3) - 80) + 'px' + '" src="' + $(this).attr('href') + '"></iframe'))
+            });
+        });
+    </script>
+<?php endif; ?>
