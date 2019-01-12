@@ -36,6 +36,17 @@ class AbstractConfig
 
     /**
      * @param string $path
+     * @param mixed $value
+     * @param string $scope
+     * @return $this
+     */
+    public function setValue($path, $value, $scope = ScopeInterface::SCOPE_STORE) {
+        $this->data[$path.$scope] = $value;
+        return $this;
+    }
+
+    /**
+     * @param string $path
      * @param string $scope
      * @return mixed
      */

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <block class="Codilar\AdvancedShipping\Block\Address\Edit\Map" name="advanced_shipping.address.edit.map" template="Codilar_AdvancedShipping::address/edit/map.phtml" before="customer_address_edit" cacheable="false" />
+        </referenceContainer>
+    </body>
+</page>

@@ -11,11 +11,13 @@ namespace Codilar\AdvancedShipping\Controller\Address;
 
 
 use Codilar\AdvancedShipping\Model\Config;
+use Magento\Customer\Api\AddressRepositoryInterface;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Framework\View\Result\Page;
@@ -35,6 +37,10 @@ class Map extends Action
      * @var OrderAddressRepositoryInterface
      */
     private $orderAddressRepository;
+    /**
+     * @var AddressRepositoryInterface
+     */
+    private $customerAddressRepository;
 
     /**
      * Map constructor.
@@ -42,18 +48,21 @@ class Map extends Action
      * @param Config $config
      * @param EncryptorInterface $encryptor
      * @param OrderAddressRepositoryInterface $orderAddressRepository
+     * @param AddressRepositoryInterface $customerAddressRepository
      */
     public function __construct(
         Context $context,
         Config $config,
         EncryptorInterface $encryptor,
-        OrderAddressRepositoryInterface $orderAddressRepository
+        OrderAddressRepositoryInterface $orderAddressRepository,
+        AddressRepositoryInterface $customerAddressRepository
     )
     {
         parent::__construct($context);
         $this->config = $config;
         $this->encryptor = $encryptor;
         $this->orderAddressRepository = $orderAddressRepository;
+        $this->customerAddressRepository = $customerAddressRepository;
     }
 
     /**
@@ -67,10 +76,19 @@ class Map extends Action
     public function execute()
     {
         if ($this->config->getIsEnabled()) {
-            $addressId = $this->encryptor->decrypt(urldecode($this->getRequest()->getParam('aid')));
-            $address = $this->orderAddressRepository->get($addressId);
-            if (!$address->getEntityId()) {
-                throw new NotFoundException(__("Address doesn't exist"));
+            try {
+                $addressId = $this->encryptor->decrypt(urldecode($this->getRequest()->getParam('aid')));
+                if ($this->getRequest()->getParam('type', 'order') === "customer") {
+                    $address = $this->customerAddressRepository->getById($addressId);
+                } else {
+                    $address = $this->orderAddressRepository->get($addressId);
+                }
+                if (!$address->getEntityId()) {
+                    throw new LocalizedException(__("Address doesn't exist"));
+                }
+                $this->config->setValue('address', $address);
+            } catch (LocalizedException $localizedException) {
+                throw new NotFoundException(__($localizedException->getMessage()));
             }
             /** @var Page $page */
             $page = $this->resultFactory->create(ResultFactory::TYPE_PAGE);

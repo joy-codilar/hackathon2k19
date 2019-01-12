@@ -10,7 +10,10 @@
 namespace Codilar\AdvancedShipping\Block\Address;
 
 
+use Codilar\AdvancedShipping\Helper\Gmaps;
 use Codilar\AdvancedShipping\Model\Config;
+use Magento\Customer\Api\AddressRepositoryInterface;
+use Magento\Directory\Model\CountryFactory;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\View\Element\Template;
 use Magento\Sales\Api\OrderAddressRepositoryInterface;
@@ -21,49 +24,45 @@ class Map extends Template
     protected $_template = "Codilar_AdvancedShipping::address/map.phtml";
 
     /**
-     * @var OrderAddressRepositoryInterface
-     */
-    private $orderAddressRepository;
-    /**
      * @var Config
      */
     private $config;
     /**
-     * @var EncryptorInterface
+     * @var Gmaps
      */
-    private $encryptor;
+    private $gmapsHelper;
+    /**
+     * @var CountryFactory
+     */
+    private $countryFactory;
 
     /**
      * Map constructor.
      * @param Template\Context $context
-     * @param OrderAddressRepositoryInterface $orderAddressRepository
      * @param Config $config
-     * @param EncryptorInterface $encryptor
+     * @param Gmaps $gmapsHelper
+     * @param CountryFactory $countryFactory
      * @param array $data
      */
     public function __construct(
         Template\Context $context,
-        OrderAddressRepositoryInterface $orderAddressRepository,
         Config $config,
-        EncryptorInterface $encryptor,
+        Gmaps $gmapsHelper,
+        CountryFactory $countryFactory,
         array $data = []
     )
     {
         parent::__construct($context, $data);
-        $this->orderAddressRepository = $orderAddressRepository;
         $this->config = $config;
-        $this->encryptor = $encryptor;
+        $this->gmapsHelper = $gmapsHelper;
+        $this->countryFactory = $countryFactory;
     }
 
     /**
      * @return \Magento\Sales\Api\Data\OrderAddressInterface
      */
     protected function getAddress() {
-        return $this->orderAddressRepository->get(
-            $this->encryptor->decrypt(
-                urldecode($this->getRequest()->getParam('aid'))
-            )
-        );
+        return $this->config->getValue('address');
     }
 
     /**
@@ -77,8 +76,19 @@ class Map extends Template
                 'lng'   =>  (double)$latLng[1]
             ];
         } else {
-            return $this->config->getDefaultMarker();
+            return $this->gmapsHelper->getLatLng($this->formatAddress());
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function formatAddress() {
+        /** @var \Magento\Sales\Model\Order\Address $address */
+        $address = $this->getAddress();
+        $street = implode(', ', $address->getStreet());
+        $country = $this->countryFactory->create()->loadByCode($address->getCountryId())->getName();
+        return "{$street} {$address->getCompany()} {$address->getCity()} {$address->getRegion()} {$country}";
     }
 
 
