@@ -1,0 +1,46 @@
+<?php
+/** @var \Codilar\AdvancedShipping\Block\Adminhtml\DeliveryAgent\Assign $block */
+$shipment = $block->getShipment();
+?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?php echo __("Assign Delivery Agent") ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <select name="assign-delivery-agent" class="select admin__control-select">
+            <option value=""><?php echo __("Select Delivery Agent") ?></option>
+            <?php foreach ($block->getDeliveryAgents() as $deliveryAgent): ?>
+                <option value="<?php echo $deliveryAgent->getId() ?>" <?php if ($shipment->getData('delivery_agent_id') === $deliveryAgent->getId()) echo "selected" ?>><?php echo __("%1 (%2)", $deliveryAgent->getName(), $deliveryAgent->getUsername()) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</section>
+<script type="text/javascript">
+    require(['jquery', 'Magento_Ui/js/modal/alert'], function ($, alert) {
+        var alertModel = function (message) {
+            alert({
+                title: '<?php echo __("Assign delivery agent") ?>',
+                content: message,
+            });
+        };
+        $('select[name="assign-delivery-agent"]').on('change', function (e) {
+            var deliveryAgentId = $(this).val();
+            if (deliveryAgentId) {
+                $.ajax({
+                    url: "<?php echo $block->getAssignPostUrl() ?>",
+                    method: "POST",
+                    showLoader: true,
+                    data: {
+                        'shipment_id': "<?php echo $shipment->getEntityId() ?>",
+                        'delivery_agent_id': deliveryAgentId
+                    },
+                    success: function (response) {
+                        if (!response.status) {
+                            alertModel(response.message);
+                        }
+                    }
+                });
+            }
+        });
+    })
+</script>

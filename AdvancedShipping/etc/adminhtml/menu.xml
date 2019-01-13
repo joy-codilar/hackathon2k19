@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Codilar_AdvancedShipping::delivery_agent" title="Delivery Agent" module="Codilar_AdvancedShipping" sortOrder="10" parent="Codilar_Core::codilar" resource="Codilar_AdvancedShipping::delivery_agent"/>
+        <add id="Codilar_AdvancedShipping::delivery_agent_view" title="View All Agents" module="Codilar_AdvancedShipping" sortOrder="10" parent="Codilar_AdvancedShipping::delivery_agent" action="advanced_shipping/deliveryAgent" resource="Codilar_AdvancedShipping::delivery_agent_view"/>
+    </menu>
+</config>

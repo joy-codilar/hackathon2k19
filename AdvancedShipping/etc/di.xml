@@ -1,5 +1,23 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <preference for="Codilar\AdvancedShipping\Api\Data\DeliveryAgentInterface" type="Codilar\AdvancedShipping\Model\DeliveryAgent" />
+    <preference for="Codilar\AdvancedShipping\Api\DeliveryAgentRepositoryInterface" type="Codilar\AdvancedShipping\Model\DeliveryAgentRepository" />
+    <preference for="Codilar\AdvancedShipping\Api\DeliveryAgentManagementInterface" type="Codilar\AdvancedShipping\Model\DeliveryAgentManagement" />
+
+
+    <virtualType name="DeliveryAgentSessionStorage" type="Magento\Framework\Session\Storage">
+        <arguments>
+            <argument name="namespace" xsi:type="const">Codilar\AdvancedShipping\Model\DeliveryAgent\Session::SESSION_NAMESPACE</argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Codilar\AdvancedShipping\Model\DeliveryAgent\Session">
+        <arguments>
+            <argument name="storage" xsi:type="object">DeliveryAgentSessionStorage</argument>
+        </arguments>
+    </type>
+
     <type name="Magento\Sales\Model\Order\Address\Renderer">
         <plugin name="add.show_map.button" type="Codilar\AdvancedShipping\Plugin\Order\Address\Renderer" />
     </type>

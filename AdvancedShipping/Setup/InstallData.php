@@ -44,6 +44,7 @@ class InstallData implements InstallDataInterface
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
+        $setup->startSetup();
         /** @var CustomerSetup $customerSetup */
         $customerSetup = $this->customerSetupFactory->create(['setup' => $setup]);
         $customerSetup->addAttribute('customer_address', 'lat_lng', array(
@@ -61,5 +62,6 @@ class InstallData implements InstallDataInterface
         $customerSetup->getEavConfig()->getAttribute('customer_address','lat_lng')
             ->setUsedInForms(['adminhtml_customer_address'])
             ->save();
+        $setup->endSetup();
     }
 }

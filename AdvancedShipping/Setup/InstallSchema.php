@@ -25,6 +25,7 @@ class InstallSchema implements InstallSchemaInterface
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
+        $setup->startSetup();
         $column = "lat_lng";
         $definition = [
             'type'     => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
@@ -35,6 +36,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $this->addColumnIfNotExists($setup, "quote_address", $column, $definition);
         $this->addColumnIfNotExists($setup, "sales_order_address", $column, $definition);
+        $setup->endSetup();
     }
 
     /**
